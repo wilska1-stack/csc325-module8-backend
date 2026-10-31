@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: csc325-module8-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
