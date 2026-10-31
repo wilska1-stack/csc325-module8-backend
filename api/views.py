@@ -5,4 +5,5 @@ from rest_framework.response import Response
 @api_view(["GET"])
 def greeting(request):
     name = request.query_params.get("name", "world")
-    return Response({"message": f"Hello, {name}!"})
+    message = f"Hello, {name}!"
+    return Response({"message": message, "length": len(message)})
