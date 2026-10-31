@@ -29,19 +29,14 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Setup - check out code
-        uses: actions/checkout@v4
-
-      # Packages the tested app as a deployable bundle. No live host is
-      # configured yet; replace this step with the tutorial's deploy command.
-      - name: Deploy - package the app
+      # Render rebuilds and restarts the service when this hook is called.
+      # The hook URL is stored as the RENDER_DEPLOY_HOOK_URL repository secret.
+      - name: Deploy - trigger Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          mkdir -p dist
-          cp -R api config manage.py requirements.txt dist/
-          ls -R dist
-
-      - name: Deploy - upload the bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: csc325-app
-          path: dist/
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set."
+            exit 1
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
